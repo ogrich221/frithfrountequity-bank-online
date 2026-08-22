@@ -8,10 +8,6 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-function createFileRoute(_id: string) {
-  return { component: (_c: unknown) => _c };
-}
-
 /* ------------------------------- navigation ------------------------------ */
 
 const NAV_LINKS = [
