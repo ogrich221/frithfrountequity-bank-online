@@ -1,6 +1,8 @@
 import { BankLogo } from "../components/bank-logo";
 import heroWoman from "../assets/banking-woman-desk.jpg";
-import { Link, createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 
 // No head() here: the home route inherits title/description/og/twitter from
