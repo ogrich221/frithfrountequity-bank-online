@@ -47,7 +47,6 @@ function Page() {
     const { error: signInError } = await supabase.auth.signInWithPassword({
       email: trimmedEmail,
       password,
-      options: { persistSession: remember },
     });
     setLoading(false);
 
