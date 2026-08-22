@@ -1,6 +1,8 @@
 import { BankLogo } from "../components/bank-logo";
 import heroWoman from "../assets/banking-woman-desk.jpg";
-import { Link, createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 
 // No head() here: the home route inherits title/description/og/twitter from
@@ -20,7 +22,35 @@ const NAV_LINKS = [
   { label: "Help & Support", href: "/help" },
 ];
 
+function useSession() {
+  const [user, setUser] = useState<{ email?: string } | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    supabase.auth.getUser().then(({ data }) => {
+      if (active) setUser(data.user);
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (active) setUser(session?.user ?? null);
+    });
+    return () => {
+      active = false;
+      sub.subscription.unsubscribe();
+    };
+  }, []);
+
+  return user;
+}
+
 function Nav() {
+  const navigate = useNavigate();
+  const user = useSession();
+
+  async function handleSignOut() {
+    await supabase.auth.signOut();
+    navigate({ to: "/login", replace: true });
+  }
+
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-brand-blue-deep/90 backdrop-blur-md">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-6 px-5 sm:px-8">
@@ -37,18 +67,40 @@ function Nav() {
           ))}
         </nav>
         <div className="flex items-center gap-3">
-          <Link
-            to="/login"
-            className="hidden rounded-full px-4 py-2.5 text-sm font-semibold text-white/90 transition-colors hover:text-white sm:inline-flex"
-          >
-            Log In
-          </Link>
-          <Link
-            to="/open-account"
-            className="inline-flex items-center rounded-full bg-brand-orange px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-brand-orange/30 transition-all hover:-translate-y-0.5 hover:bg-brand-orange-deep"
-          >
-            Open an Account
-          </Link>
+          {user ? (
+            <>
+              <span className="hidden max-w-[180px] truncate text-sm font-medium text-white/85 sm:inline">
+                {user.email}
+              </span>
+              <button
+                onClick={handleSignOut}
+                className="hidden rounded-full border border-white/25 px-4 py-2.5 text-sm font-semibold text-white/90 transition-colors hover:bg-white/10 hover:text-white sm:inline-flex"
+              >
+                Sign Out
+              </button>
+              <Link
+                to="/"
+                className="inline-flex items-center rounded-full bg-brand-orange px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-brand-orange/30 transition-all hover:-translate-y-0.5 hover:bg-brand-orange-deep"
+              >
+                Dashboard
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="hidden rounded-full px-4 py-2.5 text-sm font-semibold text-white/90 transition-colors hover:text-white sm:inline-flex"
+              >
+                Log In
+              </Link>
+              <Link
+                to="/open-account"
+                className="inline-flex items-center rounded-full bg-brand-orange px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-brand-orange/30 transition-all hover:-translate-y-0.5 hover:bg-brand-orange-deep"
+              >
+                Open an Account
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </header>
