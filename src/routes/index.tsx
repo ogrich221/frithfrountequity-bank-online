@@ -59,7 +59,7 @@ function Nav() {
 
 function Hero() {
   return (
-    <section className="relative flex min-h-[92vh] items-center overflow-hidden text-white">
+    <section className="relative flex items-center overflow-hidden text-white">
       {/* Full-bleed background photo — she is the backdrop of the page */}
       <img
         src={heroWoman}
@@ -68,12 +68,13 @@ function Hero() {
         height={1024}
         className="absolute inset-0 h-full w-full object-cover object-top"
       />
-      {/* readability overlay */}
-      <div className="absolute inset-0 bg-[linear-gradient(115deg,rgba(8,18,43,0.92)_0%,rgba(8,18,43,0.72)_45%,rgba(255,112,22,0.35)_100%)]" />
+      {/* readability overlay — a taller, darker fade on mobile since the copy
+          spans the full width; a horizontal fade once the card sits beside it */}
+      <div className="absolute inset-0 bg-[linear-gradient(165deg,rgba(8,18,43,0.94)_0%,rgba(8,18,43,0.82)_48%,rgba(255,112,22,0.38)_100%)] lg:bg-[linear-gradient(115deg,rgba(8,18,43,0.92)_0%,rgba(8,18,43,0.72)_45%,rgba(255,112,22,0.35)_100%)]" />
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-background/95 to-transparent" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.08)_1px,transparent_0)] bg-[length:34px_34px]" />
 
-      <div className="relative mx-auto grid w-full max-w-7xl gap-14 px-5 py-24 sm:px-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:py-28">
+      <div className="relative mx-auto grid w-full max-w-7xl gap-14 px-5 py-20 sm:px-8 lg:min-h-[92vh] lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:py-28">
         <div>
           <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-white/90 backdrop-blur">
             <span className="h-2 w-2 animate-pulse rounded-full bg-brand-orange" />
@@ -119,10 +120,11 @@ function Hero() {
           </div>
         </div>
 
-        {/* Silver card — floating over the background photo */}
-        <div className="relative mx-auto w-full max-w-sm lg:ml-auto">
-          <div className="absolute -inset-8 rounded-[3rem] bg-white/10 blur-3xl" />
-          <div className="relative rotate-[-4deg] rounded-2xl bg-[linear-gradient(115deg,#f7f8fa_0%,#c9ced6_28%,#eef1f5_50%,#aeb4bd_74%,#dfe3e8_100%)] p-6 text-slate-800 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.55)] ring-1 ring-white/60">
+        {/* Silver card — centered and level below the copy on mobile, floating
+            over the monitor on the right once there's room */}
+        <div className="relative mx-auto w-full max-w-xs sm:max-w-sm lg:ml-auto">
+          <div className="absolute -inset-6 rounded-[3rem] bg-white/10 blur-3xl lg:-inset-8" />
+          <div className="relative rotate-0 rounded-2xl bg-[linear-gradient(115deg,#f7f8fa_0%,#c9ced6_28%,#eef1f5_50%,#aeb4bd_74%,#dfe3e8_100%)] p-6 text-slate-800 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.55)] ring-1 ring-white/60 sm:rotate-[-4deg]">
             <div className="flex items-start justify-between">
               <div className="h-9 w-12 rounded-md bg-[linear-gradient(135deg,#e6c98a,#b9963f)] ring-1 ring-amber-700/30" />
               <span className="text-[0.6rem] font-semibold uppercase tracking-[0.25em] text-slate-500">
