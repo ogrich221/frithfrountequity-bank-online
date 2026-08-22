@@ -59,18 +59,23 @@ function Nav() {
 
 function Hero() {
   return (
-    <section className="relative overflow-hidden bg-[linear-gradient(140deg,var(--brand-blue-deep)_0%,var(--brand-blue)_45%,var(--brand-orange-deep)_100%)] text-white">
-      {/* decorative shapes */}
-      <div className="pointer-events-none absolute -left-32 top-10 h-[30rem] w-[30rem] rounded-full bg-brand-orange/25 blur-[110px]" />
-      <div className="pointer-events-none absolute right-1/4 -top-24 h-80 w-80 rounded-full bg-sky-300/20 blur-[100px]" />
-      <div className="pointer-events-none absolute -right-24 bottom-0 h-[26rem] w-[26rem] rounded-full bg-brand-blue-deep/60 blur-[100px]" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.10)_1px,transparent_0)] bg-[length:30px_30px]" />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-background/95 to-transparent" />
+    <section className="relative flex min-h-[92vh] items-center overflow-hidden text-white">
+      {/* Full-bleed background photo — she is the backdrop of the page */}
+      <img
+        src={heroWoman}
+        alt="Customer managing her frithfrontequity accounts on a desktop computer"
+        width={1024}
+        height={1024}
+        className="absolute inset-0 h-full w-full object-cover object-top"
+      />
+      {/* readability overlay */}
+      <div className="absolute inset-0 bg-[linear-gradient(115deg,rgba(8,18,43,0.92)_0%,rgba(8,18,43,0.72)_45%,rgba(255,112,22,0.35)_100%)]" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-background/95 to-transparent" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.08)_1px,transparent_0)] bg-[length:34px_34px]" />
 
-
-      <div className="relative mx-auto grid max-w-7xl gap-14 px-5 py-20 sm:px-8 lg:grid-cols-2 lg:items-center lg:py-28">
+      <div className="relative mx-auto grid w-full max-w-7xl gap-14 px-5 py-24 sm:px-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:py-28">
         <div>
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-white/90">
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-white/90 backdrop-blur">
             <span className="h-2 w-2 animate-pulse rounded-full bg-brand-orange" />
             Banking built for everyday life
           </span>
@@ -114,32 +119,20 @@ function Hero() {
           </div>
         </div>
 
-        {/* Customer photo + silver card */}
-        <div className="relative mx-auto w-full max-w-lg pb-24 lg:ml-auto">
-          <div className="absolute -inset-6 rounded-[3rem] bg-white/10 blur-2xl" />
-          <div className="relative overflow-hidden rounded-[2.5rem] ring-1 ring-white/25 shadow-2xl">
-            <img
-              src={heroWoman}
-              alt="Customer managing her frithfrontequity accounts on a desktop computer"
-              width={1024}
-              height={1024}
-              className="h-full w-full object-cover"
-            />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-brand-blue-deep/60 via-transparent to-transparent" />
-          </div>
-
-          {/* Silver card — horizontal, overlapping the photo */}
-          <div className="absolute -bottom-2 left-1/2 w-[92%] max-w-sm -translate-x-1/2 rotate-[-4deg] rounded-2xl bg-[linear-gradient(115deg,#f7f8fa_0%,#c9ced6_28%,#eef1f5_50%,#aeb4bd_74%,#dfe3e8_100%)] p-5 text-slate-800 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.55)] ring-1 ring-white/60">
+        {/* Silver card — floating over the background photo */}
+        <div className="relative mx-auto w-full max-w-sm lg:ml-auto">
+          <div className="absolute -inset-8 rounded-[3rem] bg-white/10 blur-3xl" />
+          <div className="relative rotate-[-4deg] rounded-2xl bg-[linear-gradient(115deg,#f7f8fa_0%,#c9ced6_28%,#eef1f5_50%,#aeb4bd_74%,#dfe3e8_100%)] p-6 text-slate-800 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.55)] ring-1 ring-white/60">
             <div className="flex items-start justify-between">
-              <div className="h-8 w-11 rounded-md bg-[linear-gradient(135deg,#e6c98a,#b9963f)] ring-1 ring-amber-700/30" />
+              <div className="h-9 w-12 rounded-md bg-[linear-gradient(135deg,#e6c98a,#b9963f)] ring-1 ring-amber-700/30" />
               <span className="text-[0.6rem] font-semibold uppercase tracking-[0.25em] text-slate-500">
                 Silver Debit
               </span>
             </div>
-            <p className="mt-5 font-mono text-lg tracking-[0.18em] text-slate-700 sm:text-xl">
+            <p className="mt-6 font-mono text-xl tracking-[0.18em] text-slate-700 sm:text-2xl">
               5487 •••• •••• 2219
             </p>
-            <div className="mt-5 flex items-end justify-between">
+            <div className="mt-6 flex items-end justify-between">
               <div>
                 <p className="text-[0.55rem] uppercase tracking-wider text-slate-500">
                   Cardholder
@@ -150,7 +143,6 @@ function Hero() {
             </div>
           </div>
         </div>
-
       </div>
     </section>
   );
