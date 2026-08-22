@@ -107,12 +107,7 @@ function Page() {
 
           <div className="flex items-center justify-between text-sm">
             <label className="flex items-center gap-2 text-muted-foreground">
-              <input
-                type="checkbox"
-                checked={remember}
-                onChange={(e) => setRemember(e.target.checked)}
-                className="accent-brand-orange"
-              />
+              <input type="checkbox" defaultChecked className="accent-brand-orange" />
               Remember me
             </label>
             <a href="#" className="font-semibold text-brand-orange-deep hover:underline">
