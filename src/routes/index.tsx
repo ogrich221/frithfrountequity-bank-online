@@ -61,7 +61,7 @@ function Hero() {
       {/* decorative shapes */}
       <div className="pointer-events-none absolute -left-32 top-10 h-[30rem] w-[30rem] rounded-full bg-brand-orange/25 blur-[110px]" />
       <div className="pointer-events-none absolute right-1/4 -top-24 h-80 w-80 rounded-full bg-sky-300/20 blur-[100px]" />
-      <div className="pointer-events-none absolute -right-24 bottom--10 h-[26rem] w-[26rem] rounded-full bg-brand-blue-deep/60 blur-[100px]" />
+      <div className="pointer-events-none absolute -right-24 bottom-0 h-[26rem] w-[26rem] rounded-full bg-brand-blue-deep/60 blur-[100px]" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.10)_1px,transparent_0)] bg-[length:30px_30px]" />
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-background/95 to-transparent" />
 
