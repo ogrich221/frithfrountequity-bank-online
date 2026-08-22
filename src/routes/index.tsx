@@ -112,32 +112,43 @@ function Hero() {
           </div>
         </div>
 
-        {/* Debit card visual */}
-        <div className="relative mx-auto w-full max-w-md lg:ml-auto">
-          <div className="absolute inset-0 -rotate-6 rounded-[2rem] bg-brand-orange/40 blur-2xl" />
-          <div className="relative rounded-[2rem] bg-gradient-to-br from-white/20 to-white/5 p-2 shadow-2xl ring-1 ring-white/25 backdrop-blur">
-            <div className="rounded-[1.6rem] bg-gradient-to-br from-brand-blue-deep to-brand-blue p-7 text-white">
-              <div className="flex items-center justify-between">
-                <BankLogo className="[&_span]:!text-white [&_p]:!text-white" />
-                <span className="text-xs font-semibold uppercase tracking-widest text-white/60">
-                  Debit
-                </span>
+        {/* Customer photo + silver card */}
+        <div className="relative mx-auto w-full max-w-lg pb-24 lg:ml-auto">
+          <div className="absolute -inset-6 rounded-[3rem] bg-white/10 blur-2xl" />
+          <div className="relative overflow-hidden rounded-[2.5rem] ring-1 ring-white/25 shadow-2xl">
+            <img
+              src={heroWoman}
+              alt="Customer managing her frithfrontequity accounts on a desktop computer"
+              width={1024}
+              height={1024}
+              className="h-full w-full object-cover"
+            />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-brand-blue-deep/60 via-transparent to-transparent" />
+          </div>
+
+          {/* Silver card — horizontal, overlapping the photo */}
+          <div className="absolute -bottom-2 left-1/2 w-[92%] max-w-sm -translate-x-1/2 rotate-[-4deg] rounded-2xl bg-[linear-gradient(115deg,#f7f8fa_0%,#c9ced6_28%,#eef1f5_50%,#aeb4bd_74%,#dfe3e8_100%)] p-5 text-slate-800 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.55)] ring-1 ring-white/60">
+            <div className="flex items-start justify-between">
+              <div className="h-8 w-11 rounded-md bg-[linear-gradient(135deg,#e6c98a,#b9963f)] ring-1 ring-amber-700/30" />
+              <span className="text-[0.6rem] font-semibold uppercase tracking-[0.25em] text-slate-500">
+                Silver Debit
+              </span>
+            </div>
+            <p className="mt-5 font-mono text-lg tracking-[0.18em] text-slate-700 sm:text-xl">
+              5487 •••• •••• 2219
+            </p>
+            <div className="mt-5 flex items-end justify-between">
+              <div>
+                <p className="text-[0.55rem] uppercase tracking-wider text-slate-500">
+                  Cardholder
+                </p>
+                <p className="mt-0.5 text-sm font-semibold">A. Morgan</p>
               </div>
-              <p className="mt-10 font-mono text-2xl tracking-[0.15em] sm:text-3xl">
-                5487 •••• •••• 2219
-              </p>
-              <div className="mt-8 flex items-end justify-between">
-                <div>
-                  <p className="text-[0.6rem] uppercase tracking-wider text-white/60">
-                    Cardholder
-                  </p>
-                  <p className="mt-1 font-semibold">A. Morgan</p>
-                </div>
-                <p className="text-lg font-bold text-brand-orange">VISA</p>
-              </div>
+              <p className="text-base font-bold italic text-slate-600">VISA</p>
             </div>
           </div>
         </div>
+
       </div>
     </section>
   );
