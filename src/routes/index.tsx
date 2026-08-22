@@ -57,11 +57,14 @@ function Nav() {
 
 function Hero() {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-brand-blue-deep via-brand-blue to-brand-orange text-white">
+    <section className="relative overflow-hidden bg-[linear-gradient(140deg,var(--brand-blue-deep)_0%,var(--brand-blue)_45%,var(--brand-orange-deep)_100%)] text-white">
       {/* decorative shapes */}
-      <div className="pointer-events-none absolute -left-24 top-24 h-96 w-96 rounded-full bg-brand-orange/30 blur-3xl" />
-      <div className="pointer-events-none absolute -right-16 bottom-0 h-[28rem] w-[28rem] rounded-full bg-brand-blue/40 blur-3xl" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.14)_1px,transparent_0)] bg-[length:26px_26px]" />
+      <div className="pointer-events-none absolute -left-32 top-10 h-[30rem] w-[30rem] rounded-full bg-brand-orange/25 blur-[110px]" />
+      <div className="pointer-events-none absolute right-1/4 -top-24 h-80 w-80 rounded-full bg-sky-300/20 blur-[100px]" />
+      <div className="pointer-events-none absolute -right-24 bottom--10 h-[26rem] w-[26rem] rounded-full bg-brand-blue-deep/60 blur-[100px]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.10)_1px,transparent_0)] bg-[length:30px_30px]" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-background/95 to-transparent" />
+
 
       <div className="relative mx-auto grid max-w-7xl gap-14 px-5 py-20 sm:px-8 lg:grid-cols-2 lg:items-center lg:py-28">
         <div>
