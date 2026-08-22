@@ -10,33 +10,128 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as BusinessRouteImport } from './routes/business'
+import { Route as HelpRouteImport } from './routes/help'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as OpenAccountRouteImport } from './routes/open-account'
+import { Route as PersonalRouteImport } from './routes/personal'
+import { Route as ProductsRouteImport } from './routes/products'
+import { Route as RatesRouteImport } from './routes/rates'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BusinessRoute = BusinessRouteImport.update({
+  id: '/business',
+  path: '/business',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HelpRoute = HelpRouteImport.update({
+  id: '/help',
+  path: '/help',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OpenAccountRoute = OpenAccountRouteImport.update({
+  id: '/open-account',
+  path: '/open-account',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PersonalRoute = PersonalRouteImport.update({
+  id: '/personal',
+  path: '/personal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductsRoute = ProductsRouteImport.update({
+  id: '/products',
+  path: '/products',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RatesRoute = RatesRouteImport.update({
+  id: '/rates',
+  path: '/rates',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/business': typeof BusinessRoute
+  '/help': typeof HelpRoute
+  '/login': typeof LoginRoute
+  '/open-account': typeof OpenAccountRoute
+  '/personal': typeof PersonalRoute
+  '/products': typeof ProductsRoute
+  '/rates': typeof RatesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/business': typeof BusinessRoute
+  '/help': typeof HelpRoute
+  '/login': typeof LoginRoute
+  '/open-account': typeof OpenAccountRoute
+  '/personal': typeof PersonalRoute
+  '/products': typeof ProductsRoute
+  '/rates': typeof RatesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/business': typeof BusinessRoute
+  '/help': typeof HelpRoute
+  '/login': typeof LoginRoute
+  '/open-account': typeof OpenAccountRoute
+  '/personal': typeof PersonalRoute
+  '/products': typeof ProductsRoute
+  '/rates': typeof RatesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/business'
+    | '/help'
+    | '/login'
+    | '/open-account'
+    | '/personal'
+    | '/products'
+    | '/rates'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/business'
+    | '/help'
+    | '/login'
+    | '/open-account'
+    | '/personal'
+    | '/products'
+    | '/rates'
+  id:
+    | '__root__'
+    | '/'
+    | '/business'
+    | '/help'
+    | '/login'
+    | '/open-account'
+    | '/personal'
+    | '/products'
+    | '/rates'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BusinessRoute: typeof BusinessRoute
+  HelpRoute: typeof HelpRoute
+  LoginRoute: typeof LoginRoute
+  OpenAccountRoute: typeof OpenAccountRoute
+  PersonalRoute: typeof PersonalRoute
+  ProductsRoute: typeof ProductsRoute
+  RatesRoute: typeof RatesRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +143,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/business': {
+      id: '/business'
+      path: '/business'
+      fullPath: '/business'
+      preLoaderRoute: typeof BusinessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/help': {
+      id: '/help'
+      path: '/help'
+      fullPath: '/help'
+      preLoaderRoute: typeof HelpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/open-account': {
+      id: '/open-account'
+      path: '/open-account'
+      fullPath: '/open-account'
+      preLoaderRoute: typeof OpenAccountRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/personal': {
+      id: '/personal'
+      path: '/personal'
+      fullPath: '/personal'
+      preLoaderRoute: typeof PersonalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/products': {
+      id: '/products'
+      path: '/products'
+      fullPath: '/products'
+      preLoaderRoute: typeof ProductsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rates': {
+      id: '/rates'
+      path: '/rates'
+      fullPath: '/rates'
+      preLoaderRoute: typeof RatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BusinessRoute: BusinessRoute,
+  HelpRoute: HelpRoute,
+  LoginRoute: LoginRoute,
+  OpenAccountRoute: OpenAccountRoute,
+  PersonalRoute: PersonalRoute,
+  ProductsRoute: ProductsRoute,
+  RatesRoute: RatesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
