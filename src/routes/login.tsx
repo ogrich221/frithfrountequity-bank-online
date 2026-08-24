@@ -126,8 +126,8 @@ function Page() {
 
         <p className="mt-6 text-center text-sm text-muted-foreground">
           New here?{" "}
-          <Link to="/open-account" className="font-semibold text-brand-blue-deep hover:underline">
-            Open an account
+          <Link to="/signup" className="font-semibold text-brand-blue-deep hover:underline">
+            Create an account
           </Link>
         </p>
       </div>
