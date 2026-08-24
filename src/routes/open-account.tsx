@@ -44,19 +44,19 @@ function Page() {
           ))}
         </div>
 
-        <form className="mt-12 rounded-3xl bg-card p-8 shadow-2xl" onSubmit={(e) => e.preventDefault()}>
-          <h2 className="text-xl font-bold">Your details</h2>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2">
-            <input placeholder="First name" className="rounded-xl border border-input bg-background px-4 py-3 outline-none focus:ring-2 focus:ring-brand-orange" />
-            <input placeholder="Last name" className="rounded-xl border border-input bg-background px-4 py-3 outline-none focus:ring-2 focus:ring-brand-orange" />
-            <input placeholder="Email" type="email" className="rounded-xl border border-input bg-background px-4 py-3 outline-none focus:ring-2 focus:ring-brand-orange" />
-            <input placeholder="Phone" type="tel" className="rounded-xl border border-input bg-background px-4 py-3 outline-none focus:ring-2 focus:ring-brand-orange" />
-          </div>
-          <button type="submit" className="mt-6 w-full rounded-xl bg-brand-orange py-3.5 font-bold text-white shadow-lg shadow-brand-orange/30 transition-all hover:-translate-y-0.5 hover:bg-brand-orange-deep">
-            Continue Application
-          </button>
-          <p className="mt-4 text-center text-xs text-muted-foreground">Opening an account is subject to identity verification and approval. FDIC insured up to $250,000.</p>
-        </form>
+        <div className="mt-12 rounded-3xl bg-card p-8 text-center shadow-2xl">
+          <h2 className="text-xl font-bold">Ready to apply?</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Create your secure online banking profile with your details, security questions and a password.
+          </p>
+          <Link
+            to="/signup"
+            className="mt-6 inline-block rounded-xl bg-brand-orange px-8 py-3.5 font-bold text-white shadow-lg shadow-brand-orange/30 transition-all hover:-translate-y-0.5 hover:bg-brand-orange-deep"
+          >
+            Start Sign Up
+          </Link>
+          <p className="mt-4 text-xs text-muted-foreground">Opening an account is subject to identity verification and approval. FDIC insured up to $250,000.</p>
+        </div>
       </div>
     </div>
   );
