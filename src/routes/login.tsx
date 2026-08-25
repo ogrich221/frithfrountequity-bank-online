@@ -50,7 +50,16 @@ function Page() {
     setLoading(false);
 
     if (signInError) {
-      setError(signInError.message);
+      const msg = signInError.message.toLowerCase();
+      if (msg.includes("invalid login credentials")) {
+        setError(
+          "That email and password don't match an account. Check your password, or use “Forgot password?” below to reset it.",
+        );
+      } else if (msg.includes("email not confirmed")) {
+        setError("Please confirm your email first — check your inbox for the activation link.");
+      } else {
+        setError(signInError.message);
+      }
       return;
     }
 
