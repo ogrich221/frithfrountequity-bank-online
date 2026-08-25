@@ -110,9 +110,9 @@ function Page() {
               <input type="checkbox" defaultChecked className="accent-brand-orange" />
               Remember me
             </label>
-            <a href="#" className="font-semibold text-brand-orange-deep hover:underline">
+            <Link to="/forgot-password" className="font-semibold text-brand-orange-deep hover:underline">
               Forgot password?
-            </a>
+            </Link>
           </div>
 
           <button
