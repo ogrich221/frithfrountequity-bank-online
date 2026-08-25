@@ -79,7 +79,7 @@ function Nav() {
                 Sign Out
               </button>
               <Link
-                to="/"
+                to="/dashboard"
                 className="inline-flex items-center rounded-full bg-brand-orange px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-brand-orange/30 transition-all hover:-translate-y-0.5 hover:bg-brand-orange-deep"
               >
                 Dashboard

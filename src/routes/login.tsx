@@ -63,7 +63,7 @@ function Page() {
       return;
     }
 
-    navigate({ to: "/" });
+    navigate({ to: "/dashboard" });
   }
 
   return (
