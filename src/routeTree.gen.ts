@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as BusinessRouteImport } from './routes/business'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
@@ -26,6 +27,11 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -90,6 +96,7 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/business': typeof BusinessRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/help': typeof HelpRoute
@@ -104,6 +111,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/business': typeof BusinessRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/help': typeof HelpRoute
@@ -119,6 +127,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/business': typeof BusinessRoute
   '/forgot-password': typeof ForgotPasswordRoute
@@ -136,6 +145,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/business'
     | '/forgot-password'
     | '/help'
@@ -150,6 +160,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin'
     | '/business'
     | '/forgot-password'
     | '/help'
@@ -164,6 +175,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/admin'
     | '/_authenticated'
     | '/business'
     | '/forgot-password'
@@ -180,6 +192,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   BusinessRoute: typeof BusinessRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
@@ -200,6 +213,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -302,6 +322,7 @@ const AuthenticatedRouteRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   BusinessRoute: BusinessRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
