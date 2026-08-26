@@ -378,6 +378,9 @@ function Footer() {
             <a href="#" className="hover:text-white">Terms</a>
             <a href="#" className="hover:text-white">Disclosures</a>
             <a href="#" className="hover:text-white">FDIC</a>
+            <Link to="/admin" className="font-semibold text-brand-orange hover:underline">
+              Admin Portal
+            </Link>
           </div>
         </div>
       </div>
