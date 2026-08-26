@@ -1,5 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
 import {
   ShieldAlert,
   UserCheck,
@@ -14,11 +14,13 @@ import {
   XCircle,
   AlertCircle,
   X,
-  FileCode2,
   KeyRound,
   Sparkles,
   ArrowUpRight,
   ArrowDownLeft,
+  LogIn,
+  Trash2,
+  LogOut,
 } from "lucide-react";
 import { BankLogo } from "@/components/bank-logo";
 
@@ -41,7 +43,6 @@ export type Customer = {
   address: string;
   city: string;
   postalCode: string;
-  passwordPlaceholder?: string;
   // Status & Approval
   status: "Active" | "Frozen";
   approvalStatus: "Approved" | "Pending Approval" | "Rejected";
@@ -55,13 +56,13 @@ export type Customer = {
   // Codes & Tax Details
   routingNumber: string;
   swiftCode: string;
-  taxId: string; // SSN / EIN / Tax Clearance
+  taxId: string; // SSN / EIN
   taxClearanceCode: string;
-  cotCode: string; // Cost of Transfer / Clearance code
+  cotCode: string; // Cost of Transfer
   imfCode: string; // IMF clearance code
 };
 
-const INITIAL_CUSTOMERS: Customer[] = [
+const DEFAULT_CUSTOMERS: Customer[] = [
   {
     id: "usr-1",
     name: "Sarah Jenkins",
@@ -160,11 +161,12 @@ const formatMoney = (n: number) =>
   n.toLocaleString("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 2 });
 
 export function DirectAdminDashboard() {
+  const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [passcode, setPasscode] = useState("");
   const [passcodeErr, setPasscodeErr] = useState<string | null>(null);
 
-  const [customers, setCustomers] = useState<Customer[]>(INITIAL_CUSTOMERS);
+  const [customers, setCustomers] = useState<Customer[]>(DEFAULT_CUSTOMERS);
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [toast, setToast] = useState<string | null>(null);
@@ -206,6 +208,33 @@ export function DirectAdminDashboard() {
     imfCode: `IMF-${Math.floor(1000 + Math.random() * 9000)}`,
   });
 
+  // Modal 4: Delete Confirmation
+  const [deleteConfirmUser, setDeleteConfirmUser] = useState<Customer | null>(null);
+
+  // Load persisted customers from localStorage
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem("ffe:admin_customers");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setCustomers(parsed);
+        }
+      }
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  function saveCustomers(updated: Customer[]) {
+    setCustomers(updated);
+    try {
+      window.localStorage.setItem("ffe:admin_customers", JSON.stringify(updated));
+    } catch {
+      /* ignore */
+    }
+  }
+
   function showToast(msg: string) {
     setToast(msg);
     setTimeout(() => setToast(null), 3500);
@@ -223,24 +252,48 @@ export function DirectAdminDashboard() {
 
   // --- ACTIONS ---
 
-  // 1. Freeze / Unfreeze
+  // 1. Log In as User (Impersonation)
+  function handleLoginAsUser(customer: Customer) {
+    try {
+      window.localStorage.setItem("ffe:impersonate_user", JSON.stringify(customer));
+      window.localStorage.setItem("ffe:demo_mode", "true");
+    } catch {
+      /* ignore */
+    }
+    showToast(`Logging into ${customer.name}'s customer dashboard...`);
+    setTimeout(() => {
+      navigate({ to: "/dashboard" });
+    }, 400);
+  }
+
+  // 2. Delete User
+  function handleDeleteUser(customer: Customer) {
+    const updated = customers.filter((c) => c.id !== customer.id);
+    saveCustomers(updated);
+    setDeleteConfirmUser(null);
+    showToast(`Deleted customer "${customer.name}".`);
+  }
+
+  // 3. Freeze / Unfreeze
   function toggleFreeze(customer: Customer) {
     const nextStatus = customer.status === "Active" ? "Frozen" : "Active";
-    setCustomers((prev) =>
-      prev.map((c) => (c.id === customer.id ? { ...c, status: nextStatus } : c))
+    const updated = customers.map((c) =>
+      c.id === customer.id ? { ...c, status: nextStatus } : c
     );
+    saveCustomers(updated);
     showToast(`${customer.name} is now ${nextStatus === "Frozen" ? "FROZEN (Locked)" : "ACTIVE (Unlocked)"}.`);
   }
 
-  // 2. User Approval Status
+  // 4. User Approval Status
   function setApproval(customer: Customer, newApproval: Customer["approvalStatus"]) {
-    setCustomers((prev) =>
-      prev.map((c) => (c.id === customer.id ? { ...c, approvalStatus: newApproval } : c))
+    const updated = customers.map((c) =>
+      c.id === customer.id ? { ...c, approvalStatus: newApproval } : c
     );
-    showToast(`${customer.name} status set to ${newApproval}.`);
+    saveCustomers(updated);
+    showToast(`${customer.name} approval status set to ${newApproval}.`);
   }
 
-  // 3. Submit Credit / Debit Balance
+  // 5. Submit Credit / Debit Balance
   function handleBalanceSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!activeCustomer) return;
@@ -252,21 +305,20 @@ export function DirectAdminDashboard() {
 
     const delta = alterType === "CREDIT" ? amt : -amt;
 
-    setCustomers((prev) =>
-      prev.map((c) => {
-        if (c.id === activeCustomer.id) {
-          if (accountType === "checking") {
-            const newBal = Math.max(0, c.checkingBalance + delta);
-            return { ...c, checkingBalance: newBal };
-          } else {
-            const newBal = Math.max(0, c.savingsBalance + delta);
-            return { ...c, savingsBalance: newBal };
-          }
+    const updated = customers.map((c) => {
+      if (c.id === activeCustomer.id) {
+        if (accountType === "checking") {
+          const newBal = Math.max(0, c.checkingBalance + delta);
+          return { ...c, checkingBalance: newBal };
+        } else {
+          const newBal = Math.max(0, c.savingsBalance + delta);
+          return { ...c, savingsBalance: newBal };
         }
-        return c;
-      })
-    );
+      }
+      return c;
+    });
 
+    saveCustomers(updated);
     setBalanceModal(false);
     setAlterAmount("");
     setAlterMemo("");
@@ -275,17 +327,18 @@ export function DirectAdminDashboard() {
     );
   }
 
-  // 4. Save Personal Info & Codes
+  // 6. Save Personal Info & Codes
   function handleEditSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!editForm) return;
 
-    setCustomers((prev) => prev.map((c) => (c.id === editForm.id ? editForm : c)));
+    const updated = customers.map((c) => (c.id === editForm.id ? editForm : c));
+    saveCustomers(updated);
     setEditModal(false);
-    showToast(`Updated details & codes for ${editForm.name}.`);
+    showToast(`Updated personal info & banking codes for ${editForm.name}.`);
   }
 
-  // 5. Add New Customer
+  // 7. Add New Customer
   function handleAddSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!newCustomer.name || !newCustomer.email) {
@@ -304,9 +357,9 @@ export function DirectAdminDashboard() {
       status: (newCustomer.status as Customer["status"]) || "Active",
       approvalStatus: (newCustomer.approvalStatus as Customer["approvalStatus"]) || "Approved",
       checkingBalance: Number(newCustomer.checkingBalance) || 0,
-      checkingAccNumber: newCustomer.checkingAccNumber || "40928170000",
+      checkingAccNumber: newCustomer.checkingAccNumber || `4092817${Math.floor(1000 + Math.random() * 9000)}`,
       savingsBalance: Number(newCustomer.savingsBalance) || 0,
-      savingsAccNumber: newCustomer.savingsAccNumber || "88910240000",
+      savingsAccNumber: newCustomer.savingsAccNumber || `8891024${Math.floor(1000 + Math.random() * 9000)}`,
       creditBalance: Number(newCustomer.creditBalance) || 0,
       creditLimit: Number(newCustomer.creditLimit) || 5000,
       routingNumber: newCustomer.routingNumber || "021000021",
@@ -317,7 +370,8 @@ export function DirectAdminDashboard() {
       imfCode: newCustomer.imfCode || "IMF-0000",
     };
 
-    setCustomers((prev) => [created, ...prev]);
+    const updated = [created, ...customers];
+    saveCustomers(updated);
     setAddModal(false);
     showToast(`Added new customer: ${created.name}`);
   }
@@ -493,9 +547,8 @@ export function DirectAdminDashboard() {
                 <th className="px-4 py-3.5">Customer / Contact</th>
                 <th className="px-4 py-3.5">Account Balances</th>
                 <th className="px-4 py-3.5">Codes (Tax / Routing / COT)</th>
-                <th className="px-4 py-3.5">Freeze Status</th>
-                <th className="px-4 py-3.5">User Approval</th>
-                <th className="px-4 py-3.5 text-right">Direct Controls</th>
+                <th className="px-4 py-3.5">Status & Approval</th>
+                <th className="px-4 py-3.5 text-right">Actions & Login</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800 text-slate-200">
@@ -529,28 +582,29 @@ export function DirectAdminDashboard() {
                     <div><span className="text-slate-400 font-sans text-[10px]">COT / IMF:</span> <span className="text-amber-300">{c.cotCode}</span> | <span className="text-purple-300">{c.imfCode}</span></div>
                   </td>
 
-                  {/* Freeze / Unfreeze Toggle */}
-                  <td className="px-4 py-4">
-                    <button
-                      onClick={() => toggleFreeze(c)}
-                      className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-extrabold transition ${
-                        c.status === "Frozen"
-                          ? "bg-red-500/20 text-red-400 border border-red-500/30 hover:bg-red-500 hover:text-white"
-                          : "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 hover:bg-red-500/20 hover:text-red-400"
-                      }`}
-                    >
-                      {c.status === "Frozen" ? <Lock className="size-3" /> : <Unlock className="size-3" />}
-                      <span>{c.status === "Frozen" ? "FROZEN (Click to Unfreeze)" : "ACTIVE (Click to Freeze)"}</span>
-                    </button>
-                  </td>
+                  {/* Status & Approval */}
+                  <td className="px-4 py-4 space-y-2">
+                    {/* Freeze / Unfreeze Toggle */}
+                    <div>
+                      <button
+                        onClick={() => toggleFreeze(c)}
+                        className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-extrabold transition ${
+                          c.status === "Frozen"
+                            ? "bg-red-500/20 text-red-400 border border-red-500/30 hover:bg-red-500 hover:text-white"
+                            : "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 hover:bg-red-500/20 hover:text-red-400"
+                        }`}
+                      >
+                        {c.status === "Frozen" ? <Lock className="size-3" /> : <Unlock className="size-3" />}
+                        <span>{c.status === "Frozen" ? "FROZEN" : "ACTIVE"}</span>
+                      </button>
+                    </div>
 
-                  {/* Approval Status */}
-                  <td className="px-4 py-4">
-                    <div className="flex items-center gap-1.5">
+                    {/* Approval Dropdown */}
+                    <div>
                       <select
                         value={c.approvalStatus}
                         onChange={(e) => setApproval(c, e.target.value as Customer["approvalStatus"])}
-                        className={`rounded-lg px-2 py-1 text-[11px] font-bold outline-none border ${
+                        className={`rounded px-1.5 py-0.5 text-[10px] font-bold outline-none border ${
                           c.approvalStatus === "Approved"
                             ? "bg-emerald-950 text-emerald-400 border-emerald-800"
                             : c.approvalStatus === "Pending Approval"
@@ -559,15 +613,25 @@ export function DirectAdminDashboard() {
                         }`}
                       >
                         <option value="Approved">Approved</option>
-                        <option value="Pending Approval">Pending Approval</option>
+                        <option value="Pending Approval">Pending</option>
                         <option value="Rejected">Rejected</option>
                       </select>
                     </div>
                   </td>
 
-                  {/* Action Buttons */}
+                  {/* Direct Action Buttons & Login as User */}
                   <td className="px-4 py-4 text-right">
-                    <div className="flex items-center justify-end gap-2">
+                    <div className="flex items-center justify-end flex-wrap gap-1.5">
+                      {/* 1. Log In As User */}
+                      <button
+                        onClick={() => handleLoginAsUser(c)}
+                        className="rounded-xl bg-blue-600 px-2.5 py-1.5 text-xs font-black text-white hover:bg-blue-500 transition flex items-center gap-1 shadow-md"
+                        title="Log in to customer dashboard as this user"
+                      >
+                        <LogIn className="size-3.5" /> Log In as User
+                      </button>
+
+                      {/* 2. Credit / Debit */}
                       <button
                         onClick={() => {
                           setActiveCustomer(c);
@@ -575,21 +639,31 @@ export function DirectAdminDashboard() {
                           setAlterType("CREDIT");
                           setBalanceModal(true);
                         }}
-                        className="rounded-xl bg-emerald-500/20 px-3 py-1.5 text-xs font-black text-emerald-400 hover:bg-emerald-500 hover:text-white transition flex items-center gap-1"
+                        className="rounded-xl bg-emerald-500/20 px-2.5 py-1.5 text-xs font-black text-emerald-400 hover:bg-emerald-500 hover:text-white transition flex items-center gap-1"
                         title="Credit or Debit Balance"
                       >
-                        <DollarSign className="size-3.5" /> Credit / Debit
+                        <DollarSign className="size-3" /> ± $
                       </button>
 
+                      {/* 3. Edit Info & Codes */}
                       <button
                         onClick={() => {
                           setEditForm({ ...c });
                           setEditModal(true);
                         }}
-                        className="rounded-xl bg-slate-800 px-3 py-1.5 text-xs font-bold text-slate-300 hover:bg-brand-orange hover:text-white transition flex items-center gap-1"
+                        className="rounded-xl bg-slate-800 px-2.5 py-1.5 text-xs font-bold text-slate-300 hover:bg-brand-orange hover:text-white transition flex items-center gap-1"
                         title="Edit Personal Info & Codes"
                       >
-                        <Edit className="size-3.5" /> Edit Info & Codes
+                        <Edit className="size-3" /> Edit
+                      </button>
+
+                      {/* 4. Delete User */}
+                      <button
+                        onClick={() => setDeleteConfirmUser(c)}
+                        className="rounded-xl bg-red-500/10 p-1.5 text-red-400 hover:bg-red-500 hover:text-white transition"
+                        title="Delete User"
+                      >
+                        <Trash2 className="size-3.5" />
                       </button>
                     </div>
                   </td>
@@ -1009,6 +1083,36 @@ export function DirectAdminDashboard() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 4: DELETE CONFIRMATION */}
+      {deleteConfirmUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-sm rounded-3xl border border-red-500/30 bg-slate-900 p-6 shadow-2xl text-white text-center">
+            <div className="mx-auto flex size-12 items-center justify-center rounded-2xl bg-red-500/20 text-red-400">
+              <Trash2 className="size-6" />
+            </div>
+            <h3 className="mt-4 text-lg font-black">Delete Customer?</h3>
+            <p className="mt-1 text-xs text-slate-400">
+              Are you sure you want to permanently delete <strong className="text-white">{deleteConfirmUser.name}</strong> ({deleteConfirmUser.email})? All balances and account codes will be permanently removed.
+            </p>
+
+            <div className="mt-6 flex gap-3">
+              <button
+                onClick={() => setDeleteConfirmUser(null)}
+                className="w-1/2 rounded-xl border border-slate-800 py-2.5 text-xs font-bold text-slate-400 hover:text-white"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleDeleteUser(deleteConfirmUser)}
+                className="w-1/2 rounded-xl bg-red-600 py-2.5 text-xs font-black text-white hover:bg-red-500 shadow-lg shadow-red-600/30"
+              >
+                Yes, Delete User
+              </button>
+            </div>
           </div>
         </div>
       )}
