@@ -12,6 +12,7 @@ import {
   TrendingUp,
   PiggyBank,
   ShieldCheck,
+  ShieldAlert,
   Lock,
   Unlock,
   FileText,
@@ -264,6 +265,8 @@ export function Dashboard() {
   // Account details modal
   const [activeAccount, setActiveAccount] = useState<Account | null>(null);
 
+  const [isImpersonating, setIsImpersonating] = useState<boolean>(false);
+
   // Load hideBalances preference from localStorage
   useEffect(() => {
     try {
@@ -276,8 +279,55 @@ export function Dashboard() {
     }
   }, []);
 
-  // Fetch real authenticated user profile or fallback to Sarah
+  // Fetch impersonated user from Admin portal or real authenticated user profile
   useEffect(() => {
+    try {
+      const imp = window.localStorage.getItem("ffe:impersonate_user");
+      if (imp) {
+        const parsed = JSON.parse(imp);
+        if (parsed?.name) {
+          setIsImpersonating(true);
+          setUserName(parsed.name);
+          setUserEmail(parsed.email || "customer@example.com");
+
+          // Override account balances if provided
+          setAccounts((prev) =>
+            prev.map((acc) => {
+              if (acc.kind === "Checking" && typeof parsed.checkingBalance === "number") {
+                return {
+                  ...acc,
+                  available: parsed.checkingBalance,
+                  secondary: parsed.checkingBalance,
+                  last4: parsed.checkingAccNumber ? parsed.checkingAccNumber.slice(-4) : acc.last4,
+                  accountNumber: parsed.checkingAccNumber || acc.accountNumber,
+                };
+              }
+              if (acc.kind === "Savings" && typeof parsed.savingsBalance === "number") {
+                return {
+                  ...acc,
+                  available: parsed.savingsBalance,
+                  secondary: 612.44,
+                  last4: parsed.savingsAccNumber ? parsed.savingsAccNumber.slice(-4) : acc.last4,
+                  accountNumber: parsed.savingsAccNumber || acc.accountNumber,
+                };
+              }
+              if (acc.kind === "Credit Card" && typeof parsed.creditBalance === "number") {
+                return {
+                  ...acc,
+                  secondary: parsed.creditBalance,
+                  available: (parsed.creditLimit || 5000) - parsed.creditBalance,
+                };
+              }
+              return acc;
+            })
+          );
+          return;
+        }
+      }
+    } catch {
+      /* ignore */
+    }
+
     let active = true;
     (async () => {
       try {
@@ -452,6 +502,31 @@ export function Dashboard() {
             className="ml-2 text-muted-foreground hover:text-foreground"
           >
             <X className="size-4" />
+          </button>
+        </div>
+      )}
+
+      {/* Admin Impersonation Bar */}
+      {isImpersonating && (
+        <div className="sticky top-0 z-50 bg-amber-500 text-slate-950 px-4 py-2.5 text-xs font-bold flex flex-wrap items-center justify-between gap-3 shadow-lg border-b border-amber-600">
+          <div className="flex items-center gap-2">
+            <ShieldAlert className="size-4 shrink-0 text-slate-950" />
+            <span>
+              Admin Impersonation Active: Currently viewing dashboard as <strong>{userName}</strong> ({userEmail})
+            </span>
+          </div>
+          <button
+            onClick={() => {
+              try {
+                window.localStorage.removeItem("ffe:impersonate_user");
+              } catch {
+                /* ignore */
+              }
+              navigate({ to: "/admin" });
+            }}
+            className="rounded-lg bg-slate-950 px-3.5 py-1 text-xs font-bold text-white transition hover:bg-slate-800 shadow"
+          >
+            ← Exit & Return to Admin Console
           </button>
         </div>
       )}
