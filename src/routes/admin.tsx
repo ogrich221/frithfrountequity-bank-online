@@ -38,6 +38,7 @@ import {
 import { BankLogo } from "@/components/bank-logo";
 
 export const Route = createFileRoute("/admin")({
+  ssr: false,
   head: () => ({
     meta: [
       { title: "Admin Portal & Control Center — frithfrountequity Bank" },
