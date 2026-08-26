@@ -209,6 +209,15 @@ function Page() {
             Open an Account
           </Link>
         </p>
+
+        <div className="mt-6 border-t border-border pt-4 text-center">
+          <Link
+            to="/admin"
+            className="text-[11px] font-semibold text-muted-foreground hover:text-brand-orange hover:underline transition"
+          >
+            Bank Staff & Auditor Console →
+          </Link>
+        </div>
       </div>
     </div>
   );
