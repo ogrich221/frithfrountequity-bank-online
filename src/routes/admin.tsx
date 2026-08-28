@@ -275,8 +275,8 @@ export function DirectAdminDashboard() {
   }
 
   // 3. Freeze / Unfreeze
-  function toggleFreeze(customer: Customer) {
-    const nextStatus = customer.status === "Active" ? "Frozen" : "Active";
+function toggleFreeze(customer: Customer) {
+    const nextStatus: Customer["status"] = customer.status === "Active" ? "Frozen" : "Active";
     const updated = customers.map((c) =>
       c.id === customer.id ? { ...c, status: nextStatus } : c
     );
