@@ -26,6 +26,69 @@ jobs:
           VITE_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_nYMFye-t9tDcSDr9_4u3rQ_pllpO3yu"
           VITE_SUPABASE_PROJECT_ID: "sagyopsmbkylppyivpoe"
 
+      - name: List ALL build output
+        run: |
+          echo "=== .output directory ==="
+          find .output -type f | head -60
+          echo ""
+          echo "=== .output/public root files ==="
+          ls -la .output/public/ 2>/dev/null || echo "No .output/public"
+          echo ""
+          echo "=== Check for index.html ==="
+          find . -name "index.html" -not -path "./node_modules/*" | head -20
+          echo ""
+          echo "=== dist directory ==="
+          find dist -type f 2>/dev/null | head -30 || echo "No dist/"
+
+      - name: Generate index.html for SPA
+        run: |
+          # TanStack Start with Nitro builds SSR output - no index.html in public.
+          # We need to create a minimal index.html that loads the client-side app.
+          
+          # Find the main JS and CSS entry files
+          MAIN_JS=$(ls .output/public/assets/index-*.js 2>/dev/null | head -1 | sed 's|.output/public/||')
+          MAIN_CSS=$(ls .output/public/assets/index-*.css 2>/dev/null | head -1 | sed 's|.output/public/||')
+          ROUTES_JS=$(ls .output/public/assets/routes-*.js 2>/dev/null | head -1 | sed 's|.output/public/||')
+          START_JS=$(ls .output/public/assets/start-*.js 2>/dev/null | head -1 | sed 's|.output/public/||')
+          
+          echo "Main JS: $MAIN_JS"
+          echo "Main CSS: $MAIN_CSS"
+          echo "Routes JS: $ROUTES_JS"
+          echo "Start JS: $START_JS"
+          
+          cat > .output/public/index.html << 'HTMLEOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <title>frithfrountequity Bank — Online Banking</title>
+            <meta name="description" content="Secure online banking with frithfrountequity Bank. Manage checking, savings, investments, and credit card accounts." />
+          HTMLEOF
+          
+          # Add CSS link if found
+          if [ -n "$MAIN_CSS" ]; then
+            echo "  <link rel=\"stylesheet\" href=\"/$MAIN_CSS\" />" >> .output/public/index.html
+          fi
+          
+          cat >> .output/public/index.html << 'HTMLEOF'
+          </head>
+          <body>
+            <div id="root"></div>
+          HTMLEOF
+          
+          # Add JS scripts
+          if [ -n "$MAIN_JS" ]; then
+            echo "  <script type=\"module\" src=\"/$MAIN_JS\"></script>" >> .output/public/index.html
+          fi
+          
+          echo "</body>" >> .output/public/index.html
+          echo "</html>" >> .output/public/index.html
+          
+          echo ""
+          echo "=== Generated index.html ==="
+          cat .output/public/index.html
+
       - name: Install Netlify CLI
         run: npm install -g netlify-cli
 
