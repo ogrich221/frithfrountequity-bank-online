@@ -1,0 +1,56 @@
+name: Deploy to Netlify
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build site
+        run: npm run build
+        env:
+          VITE_SUPABASE_URL: "https://sagyopsmbkylppyivpoe.supabase.co"
+          VITE_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_nYMFye-t9tDcSDr9_4u3rQ_pllpO3yu"
+          VITE_SUPABASE_PROJECT_ID: "sagyopsmbkylppyivpoe"
+
+      - name: List build output
+        run: |
+          echo "--- Checking dist directory ---"
+          ls -la dist/ || echo "No dist/ directory"
+          ls -la dist/public/ || echo "No dist/public/ directory"
+          ls -la .output/ || echo "No .output/ directory"
+          ls -la .output/public/ || echo "No .output/public/ directory"
+
+      - name: Install Netlify CLI
+        run: npm install -g netlify-cli
+
+      - name: Deploy to Netlify
+        run: |
+          # Try dist/public first, then .output/public, then dist
+          if [ -d "dist/public" ]; then
+            echo "Deploying dist/public/"
+            netlify deploy --prod --dir=dist/public --site=112b4479-db85-4364-9fc4-7c554ee163e5 --auth=nfp_rfqfz3GtnNJZqZidcjCCW5Rmke2rSxZV7f81
+          elif [ -d ".output/public" ]; then
+            echo "Deploying .output/public/"
+            netlify deploy --prod --dir=.output/public --site=112b4479-db85-4364-9fc4-7c554ee163e5 --auth=nfp_rfqfz3GtnNJZqZidcjCCW5Rmke2rSxZV7f81
+          elif [ -d "dist" ]; then
+            echo "Deploying dist/"
+            netlify deploy --prod --dir=dist --site=112b4479-db85-4364-9fc4-7c554ee163e5 --auth=nfp_rfqfz3GtnNJZqZidcjCCW5Rmke2rSxZV7f81
+          else
+            echo "ERROR: No build output directory found!"
+            find . -name "index.html" -not -path "./node_modules/*" | head -20
+            exit 1
+          fi
