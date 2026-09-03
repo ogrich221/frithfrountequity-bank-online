@@ -26,12 +26,5 @@ jobs:
           VITE_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_nYMFye-t9tDcSDr9_4u3rQ_pllpO3yu"
           VITE_SUPABASE_PROJECT_ID: "sagyopsmbkylppyivpoe"
 
-      - name: Show build output
-        run: |
-          echo "=== .output/public ==="
-          find .output/public -type f 2>/dev/null | head -30
-          echo "=== .netlify ==="
-          find .netlify -type f 2>/dev/null | head -30
-
       - name: Deploy to Netlify
-        run: npx netlify-cli deploy --prod --site=112b4479-db85-4364-9fc4-7c554ee163e5 --auth=nfp_rfqfz3GtnNJZqZidcjCCW5Rmke2rSxZV7f81
+        run: npx netlify-cli deploy --prod --dir=dist --functions=.netlify/functions-internal --site=112b4479-db85-4364-9fc4-7c554ee163e5 --auth=nfp_rfqfz3GtnNJZqZidcjCCW5Rmke2rSxZV7f81
