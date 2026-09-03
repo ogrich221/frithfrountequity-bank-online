@@ -26,15 +26,8 @@ jobs:
           VITE_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_nYMFye-t9tDcSDr9_4u3rQ_pllpO3yu"
           VITE_SUPABASE_PROJECT_ID: "sagyopsmbkylppyivpoe"
 
-      - name: Create index.html and deploy
-        run: |
-          CSS_FILE=$(find .output/public/assets -name "index-*.css" 2>/dev/null | head -1 | sed 's|^.output/public/||')
-          JS_FILE=$(find .output/public/assets -name "index-*.js" 2>/dev/null | head -1 | sed 's|^.output/public/||')
-          echo "CSS=$CSS_FILE JS=$JS_FILE"
-          printf '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8"/>\n<meta name="viewport" content="width=device-width,initial-scale=1.0"/>\n<title>frithfrountequity Bank</title>\n<link rel="stylesheet" href="/%s"/>\n</head>\n<body>\n<div id="root"></div>\n<script type="module" src="/%s"></script>\n</body>\n</html>' "$CSS_FILE" "$JS_FILE" > .output/public/index.html
-          echo "/* /index.html 200" > .output/public/_redirects
-          cat .output/public/index.html
-          echo "---"
-          find .output/public -type f | sort
-          echo "--- deploying ---"
-          npx netlify-cli deploy --prod --dir=.output/public --site=112b4479-db85-4364-9fc4-7c554ee163e5 --auth=nfp_rfqfz3GtnNJZqZidcjCCW5Rmke2rSxZV7f81
+      - name: Show build output
+        run: find .output -type f | head -40
+
+      - name: Deploy to Netlify
+        run: npx netlify-cli deploy --prod --dir=.output/public --site=112b4479-db85-4364-9fc4-7c554ee163e5 --auth=nfp_rfqfz3GtnNJZqZidcjCCW5Rmke2rSxZV7f81
