@@ -26,63 +26,12 @@ jobs:
           VITE_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_nYMFye-t9tDcSDr9_4u3rQ_pllpO3yu"
           VITE_SUPABASE_PROJECT_ID: "sagyopsmbkylppyivpoe"
 
-      - name: Create SPA shell and deploy
+      - name: Show build output
         run: |
-          # Find built assets
-          CSS=$(find .output/public/assets -name "styles-*.css" 2>/dev/null | head -1 | sed 's|^.output/public||')
-          JS=$(find .output/public/assets -name "index-*.js" 2>/dev/null | head -1 | sed 's|^.output/public||')
-          ROUTE_JS=$(find .output/public/assets -name "routes-*.js" 2>/dev/null | head -1 | sed 's|^.output/public||')
-          START_JS=$(find .output/public/assets -name "start-*.js" 2>/dev/null | head -1 | sed 's|^.output/public||')
-          STORE_JS=$(find .output/public/assets -name "usestore-*.js" -o -name "useStore-*.js" 2>/dev/null | head -1 | sed 's|^.output/public||')
-          ROUTE_SINGLE=$(find .output/public/assets -name "route-*.js" 2>/dev/null | head -1 | sed 's|^.output/public||')
-          echo "CSS=$CSS JS=$JS ROUTE_JS=$ROUTE_JS"
+          echo "=== .output/public ==="
+          find .output/public -type f 2>/dev/null | head -30
+          echo "=== .netlify ==="
+          find .netlify -type f 2>/dev/null | head -30
 
-          # Create proper TanStack Start SPA index.html
-          cat > .output/public/index.html << 'ENDOFHTML'
-          <!DOCTYPE html>
-          <html lang="en">
-          <head>
-            <meta charset="UTF-8" />
-            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-            <title>frithfrontequity - Online Banking</title>
-            <meta name="description" content="Member-focused online banking with no-fee checking, high-yield savings, business accounts, and competitive rates." />
-            <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-            <link rel="preconnect" href="https://fonts.googleapis.com" />
-            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-            <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" />
-          ENDOFHTML
-
-          # Add CSS
-          if [ -n "$CSS" ]; then
-            echo "  <link rel=\"stylesheet\" href=\"$CSS\" />" >> .output/public/index.html
-          fi
-
-          cat >> .output/public/index.html << 'ENDOFHTML'
-          </head>
-          <body>
-            <div id="root"></div>
-          ENDOFHTML
-
-          # Add all JS modules
-          for jsfile in $JS $ROUTE_JS $START_JS $STORE_JS $ROUTE_SINGLE; do
-            if [ -n "$jsfile" ]; then
-              echo "  <script type=\"module\" src=\"$jsfile\"></script>" >> .output/public/index.html
-            fi
-          done
-
-          cat >> .output/public/index.html << 'ENDOFHTML'
-          </body>
-          </html>
-          ENDOFHTML
-
-          # SPA fallback
-          echo "/*    /index.html   200" > .output/public/_redirects
-
-          echo "=== Generated index.html ==="
-          cat .output/public/index.html
-          echo ""
-          echo "=== All deploy files ==="
-          find .output/public -type f | sort
-
-          # Deploy
-          npx netlify-cli deploy --prod --dir=.output/public --site=112b4479-db85-4364-9fc4-7c554ee163e5 --auth=nfp_rfqfz3GtnNJZqZidcjCCW5Rmke2rSxZV7f81
+      - name: Deploy to Netlify
+        run: npx netlify-cli deploy --prod --site=112b4479-db85-4364-9fc4-7c554ee163e5 --auth=nfp_rfqfz3GtnNJZqZidcjCCW5Rmke2rSxZV7f81
